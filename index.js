@@ -33,4 +33,16 @@ io.on("connection", (socket) => {
       socket.to(roomID).emit("getMessage", message);
     } else cbMessage("Error sending message, currently not in a room.");
   });
+
+  socket.on("draw", (roomID, data) => {
+    socket.to(roomID).emit("drawing", data);
+  });
+
+  socket.on("startDraw", (roomID, data) => {
+    socket.to(roomID).emit("startDrawing", data);
+  });
+
+  socket.on("endDraw", (roomID) => {
+    socket.to(roomID).emit("endDrawing");
+  });
 });
