@@ -10,14 +10,16 @@ io.on("connection", (socket) => {
   socket.on("createOrJoin", (roomID, message) => {
     const room = io.sockets.adapter.rooms.get(roomID);
 
-    if (room) message(`Joining existing room ${roomID}`);
-    else message(`Creating new room ${roomID}`);
+    if (room) message(`You joined room ${roomID}`);
+    else message(`You created room ${roomID}`);
 
     socket.join(roomID);
+    socket.to(roomID).emit("getMessage", `User joined room ${roomID}`);
   });
 
   socket.on("leaveRoom", (roomID) => {
     socket.leave(roomID);
+    socket.to(roomID).emit("getMessage", `User left room ${roomID}`);
   });
 
   socket.on("sendMessage", (roomID, message) => {
@@ -34,5 +36,9 @@ io.on("connection", (socket) => {
 
   socket.on("endDraw", (roomID) => {
     socket.to(roomID).emit("endDrawing");
+  });
+
+  socket.on("clearDraw", (roomID) => {
+    socket.to(roomID).emit("clearDrawing");
   });
 });
