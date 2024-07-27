@@ -1,17 +1,18 @@
-const { generateRandomUsername } = require("./modules/username");
+require("dotenv").config();
+
 const express = require("express");
 const app = express();
 const httpServer = require("http").createServer(app);
-require("dotenv").config();
+const { generateRandomUsername } = require("./modules/username");
 
 app.use(express.static("dist"));
 
 const PORT = process.env.PORT || 3001;
-const SERVER_URL = process.env.SERVER_URL || "*";
+const CLIENT_URL = process.env.CLIENT_URL || "*";
 
 const io = require("socket.io")(httpServer, {
   cors: {
-    origin: [SERVER_URL],
+    origin: [CLIENT_URL],
   },
 });
 
