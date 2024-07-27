@@ -16,22 +16,12 @@ io.on("connection", (socket) => {
     socket.join(roomID);
   });
 
-  socket.on("leaveRoom", (roomID, message) => {
-    const room = io.sockets.adapter.rooms.get(roomID);
-
-    if (room) {
-      message(`Leaving room ${roomID}`);
-      socket.leave(roomID);
-    } else message("Error leaving room, currently not in a room.");
+  socket.on("leaveRoom", (roomID) => {
+    socket.leave(roomID);
   });
 
-  socket.on("sendMessage", (roomID, message, cbMessage) => {
-    const room = io.sockets.adapter.rooms.get(roomID);
-
-    if (room) {
-      cbMessage(`Sending message to current room ${roomID}`);
-      socket.to(roomID).emit("getMessage", message);
-    } else cbMessage("Error sending message, currently not in a room.");
+  socket.on("sendMessage", (roomID, message) => {
+    socket.to(roomID).emit("getMessage", message);
   });
 
   socket.on("draw", (roomID, data) => {
