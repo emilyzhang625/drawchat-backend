@@ -10,8 +10,12 @@ io.on("connection", (socket) => {
   socket.on("createOrJoin", (roomID, message) => {
     const room = io.sockets.adapter.rooms.get(roomID);
 
-    if (room) message(`You joined room ${roomID}`);
-    else message(`You created room ${roomID}`);
+    if (room)
+      message(`You joined room ${roomID}, starting off with a blank canvas`);
+    else
+      message(
+        `You created room ${roomID}, incoming users start off with a blank canvas`
+      );
 
     socket.join(roomID);
     socket.to(roomID).emit("getMessage", `User joined room ${roomID}`);
