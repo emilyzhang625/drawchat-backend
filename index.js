@@ -1,9 +1,15 @@
 const { generateRandomUsername } = require("./modules/username");
+const express = require("express");
+const app = express();
+const httpServer = require("http").createServer(app);
 require("dotenv").config();
 
-const PORT = process.env.PORT;
-const SERVER_URL = process.env.SERVER_URL;
-const io = require("socket.io")(PORT, {
+app.use(express.static("dist"));
+
+const PORT = process.env.PORT || 3001;
+const SERVER_URL = process.env.SERVER_URL || "*";
+
+const io = require("socket.io")(httpServer, {
   cors: {
     origin: [SERVER_URL],
   },
@@ -68,7 +74,14 @@ io.on("connection", (socket) => {
     socket.to(roomID).emit("endDrawing");
   });
 
-  socket.on("clearDraw", (roomID) => {
+  socket.on("clearDraw", (roomID, currSocket) => {
     socket.to(roomID).emit("clearDrawing");
+    socket
+      .to(roomID)
+      .emit("getMessage", `${userMap.get(currSocket)} cleared canvas`);
   });
+});
+
+httpServer.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
