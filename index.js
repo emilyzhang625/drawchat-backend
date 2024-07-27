@@ -1,33 +1,56 @@
+const { generateRandomUsername } = require("./modules/username");
+
 const io = require("socket.io")(3001, {
   cors: {
     origin: ["http://localhost:5173"],
   },
 });
 
-io.on("connection", (socket) => {
-  console.log(socket.id);
+const userMap = new Map();
 
-  socket.on("createOrJoin", (roomID, message) => {
+io.on("connection", (socket) => {
+  const username = generateRandomUsername();
+  userMap.set(socket.id, username);
+
+  socket.on("createOrJoin", (roomID, currSocket, message) => {
     const room = io.sockets.adapter.rooms.get(roomID);
 
-    if (room)
-      message(`You joined room ${roomID}, starting off with a blank canvas`);
-    else
+    if (room) {
       message(
-        `You created room ${roomID}, incoming users start off with a blank canvas`
+        `You joined room ${roomID} as ${userMap.get(
+          currSocket
+        )}, starting off with a blank canvas`
       );
+    } else {
+      message(
+        `You created room ${roomID} as ${userMap.get(
+          currSocket
+        )}, incoming users start off with a blank canvas`
+      );
+    }
 
     socket.join(roomID);
-    socket.to(roomID).emit("getMessage", `User joined room ${roomID}`);
+    socket
+      .to(roomID)
+      .emit("getMessage", `${userMap.get(socket.id)} joined room`);
+
+    io.to(roomID).emit("updateSize", io.sockets.adapter.rooms.get(roomID).size);
   });
 
   socket.on("leaveRoom", (roomID) => {
     socket.leave(roomID);
-    socket.to(roomID).emit("getMessage", `User left room ${roomID}`);
+    socket.to(roomID).emit("getMessage", `${userMap.get(socket.id)} left room`);
+    if (io.sockets.adapter.rooms.get(roomID))
+      io.to(roomID).emit(
+        "updateSize",
+        io.sockets.adapter.rooms.get(roomID).size
+      );
   });
 
-  socket.on("sendMessage", (roomID, message) => {
-    socket.to(roomID).emit("getMessage", message);
+  socket.on("sendMessage", (roomID, currSocket, message) => {
+    socket
+      .to(roomID)
+      .emit("getMessage", `${userMap.get(currSocket)}: ${message}`);
   });
 
   socket.on("draw", (roomID, data) => {
