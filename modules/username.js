@@ -45,7 +45,7 @@ function generateRandomUsername() {
   ];
   const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
   const noun = nouns[Math.floor(Math.random() * nouns.length)];
-  return adjective + noun + Math.floor(Math.random() * 1000);
+  return adjective + noun + Math.floor(Math.random() * 100);
 }
 
 module.exports = { generateRandomUsername };

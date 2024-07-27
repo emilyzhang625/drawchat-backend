@@ -1,8 +1,11 @@
 const { generateRandomUsername } = require("./modules/username");
+require("dotenv").config();
 
-const io = require("socket.io")(3001, {
+const PORT = process.env.PORT;
+const SERVER_URL = process.env.SERVER_URL;
+const io = require("socket.io")(PORT, {
   cors: {
-    origin: ["http://localhost:5173"],
+    origin: [SERVER_URL],
   },
 });
 
