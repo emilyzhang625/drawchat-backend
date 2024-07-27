@@ -14,7 +14,6 @@ app.get(["/"], (req, res) => {
 
 const PORT = process.env.PORT || 3001;
 const CLIENT_URL = process.env.CLIENT_URL || "*";
-console.log(CLIENT_URL);
 
 const io = require("socket.io")(httpServer, {
   cors: {
