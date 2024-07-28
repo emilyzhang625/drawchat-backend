@@ -86,15 +86,6 @@ io.on("connection", (socket) => {
       .to(roomID)
       .emit("getMessage", `${userMap.get(currSocket)} cleared canvas`);
   });
-
-  socket.on("disconnect", () => {
-    const rooms = Array.from(socket.rooms).filter((room) => room !== socket.id);
-    rooms.forEach((room) => {
-      socket
-        .to(room)
-        .emit("getMessage", `${userMap.get(socket.id)} got disconnected`);
-    });
-  });
 });
 
 httpServer.listen(PORT, () => {
