@@ -1,5 +1,4 @@
 # DrawChat
-A single-page application with collaborative rooms that share a drawing canvas and real-time message feed.
 
 **Live Demo:** [DrawChat](https://drawchat.onrender.com/)  
 
